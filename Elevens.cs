@@ -38,6 +38,8 @@ public class ElevensGame
 List<Card> hand = new List<Card>();
 bool isGameOver = false;
 
+private static Deck gameDeck = new Deck(); //static shared deck
+
 //properties
 public List<Card> Hand
 {
@@ -57,36 +59,63 @@ public ElevensGame(List<Card> hand)
 
 public List<Card> Deal()
 {
-   //to be implemented
-   Deck deck = new Deck();
-   deck.Shuffle();
+   gameDeck.Shuffle();
    for(int x = 0; x<9; x++)
    {
-      hand[x] = deck.TakeTopCard();
+      hand[x] = gameDeck.TakeTopCard();
    }
    return hand;
 }
 
 public void PlayerMove()
 {
-   //to be implemented
+   Console.WriteLine("Select cards by index separated by space: ");
+   string input = Console.ReadLine();
+   SelectCard = input.Split(' ').Select(int.Parse).ToList();
+
+   if (SelectCard.Count > 0 && SystemCheck())
+   {
+      foreach (int index in SelectCard)
+      {
+         Replace(index);
+      }
+      Console.WriteLine("Match made!");
+   }
+   else
+   {
+      Console.WriteLine("Invalid Move. Try again.");
+   }
 }
 
 public bool SystemCheck()
 {
-   //to be implemented
-   return true;
+   int sum = 0;
+   foreach (int index in SelectCard)
+   {
+      sum += (int)hand[index].Rank;
+   }
+   return (sum == 11 || sum == 36 );  //11 for pairs, 36 for triple face for now
 }
 
-public Card Replace()
+public Card Replace(int index)
 {
-   //to be implemented
-   return newcard; //placeholder
+   Card newCard = gameDeck.TakeTopCard();
+   return newCard;
 }
 
 public void Reset()
 {
-   //to be implemented
+   gameDeck = new Deck();
+   gameDeck.Shuffle();
+
+   hand.Clear();
+   for(int x = 0; x<9; x++)
+   {
+      hand[x] = gameDeck.TakeTopCard();
+   }
+   
+   isGameOver = false;
+   SelectCard = new List<int>();
 }
 
 public bool CheckWin()
